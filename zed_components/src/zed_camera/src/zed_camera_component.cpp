@@ -522,7 +522,7 @@ void ZedCamera::getDebugParams()
     }
   } else {
     rcutils_ret_t res =
-      rcutils_logging_set_logger_level(get_logger().get_name(), RCUTILS_LOG_SEVERITY_INFO);
+      rcutils_logging_set_logger_level(get_logger().get_name(), RCUTILS_LOG_SEVERITY_ERROR);
 
     if (res != RCUTILS_RET_OK) {
       RCLCPP_INFO(get_logger(), "Error setting INFO level for logger");
@@ -4074,16 +4074,15 @@ bool ZedCamera::startPosTracking()
   if (mGnssFusionEnabled && err == sl::ERROR_CODE::SUCCESS) {
     mMap2UtmTransfValid = false;
 
-    sl::PositionalTrackingFusionParameters params;
-    params.enable_GNSS_fusion = mGnssFusionEnabled;
-    params.gnss_initialisation_distance = mGnssInitDistance;
-    sl::FUSION_ERROR_CODE fus_err = mFusion.enablePositionalTracking(params);
+    //sl::PositionalTrackingFusionParameters params;
+    //params.enable_GNSS_fusion = mGnssFusionEnabled;
+    //params.gnss_initialisation_distance = mGnssInitDistance;
+    //sl::FUSION_ERROR_CODE fus_err = mFusion.enablePositionalTracking(params);
 
-    if (fus_err != sl::FUSION_ERROR_CODE::SUCCESS) {
+    //if (fus_err != sl::FUSION_ERROR_CODE::SUCCESS) {
+    if (false) {
       mPosTrackingStarted = false;
-      RCLCPP_WARN(
-        get_logger(), "Fusion Pos. Tracking not started: %s", sl::toString(
-          fus_err).c_str());
+      RCLCPP_WARN(get_logger(), "Fusion Pos. Tracking not started");
       mZed.disablePositionalTracking();
       return false;
     }
@@ -6577,8 +6576,8 @@ void ZedCamera::processGeoPose()
   if (!mGnss2BaseTransfValid) {
     getGnss2BaseTransform();
   }
-
-  mGeoPoseStatus = mFusion.getGeoPose(mLastGeoPose);
+  return;
+  //mGeoPoseStatus = mFusion.getGeoPose(mLastGeoPose);
 
   publishGeoPoseStatus();
 
